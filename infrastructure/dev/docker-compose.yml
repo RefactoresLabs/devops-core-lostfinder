@@ -30,7 +30,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - - ../../backend-code:/app
+      - ../../backend-code:/app
     environment:
       - DATABASE_URL=postgresql://findit_user:findit_pass@db:5432/findit_db
       - FLASK_APP=app.py
