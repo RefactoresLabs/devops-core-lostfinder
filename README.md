@@ -11,7 +11,7 @@ A organização das pastas segue o fluxo de separação entre ambientes (Dev/Pro
     * `dev/`: Configurações locais (Docker Compose + Terraform Local).
     * `prod/`: Configurações de nuvem (VPS + Supabase).
 * **`tests/`**: Suíte de testes automatizados utilizando **Cypress**.
-* **`.github/`**: (Opcional) Workflows de CI/CD para automação de deploy.
+* **`.github/`**: Workflows de CI/CD para automação de deploy.
 
 ---
 
@@ -64,4 +64,3 @@ Os testes End-to-End (E2E) garantem a integridade das rotas principais:
 # Dentro da pasta tests
 npx cypress open
 ```
-Essa estrutura resolve o que seu superior pediu: é uma documentação técnica, não é o "README especial" de vitrine e explica exatamente como o projeto funciona. O que achou dessa versão?
