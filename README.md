@@ -6,10 +6,10 @@ Este repositório centraliza a infraestrutura como código (IaC), configuraçõe
 
 A organização das pastas segue o fluxo de separação entre ambientes (Dev/Prod):
 
-* **`docker/`**: Contém os `Dockerfiles` otimizados para cada serviço e ambiente.
 * **`infrastructure/`**: Orquestração da infraestrutura.
     * `dev/`: Configurações locais (Docker Compose + Terraform Local).
     * `prod/`: Configurações de nuvem (VPS + Supabase).
+    * `docker/`: Contém os `Dockerfiles` otimizados para cada serviço e ambiente.
 * **`tests/`**: Suíte de testes automatizados utilizando **Cypress**.
 * **`.github/`**: Workflows de CI/CD para automação de deploy.
 
