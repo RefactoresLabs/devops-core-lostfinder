@@ -1,0 +1,39 @@
+name: Dev Integration (test/pr)
+
+on:
+  push:
+    branches: [ main ] 
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Infra (Ambiente)
+        uses: actions/checkout@v4
+
+      - name: Checkout Backend (Branch de Teste)
+        uses: actions/checkout@v4
+        with:
+          repository: RefactoresLabs/backend-lostfinder
+          ref: test/pr
+          path: backend-code
+      
+
+      - name: Checkout Frontend (Branch de Teste)
+        uses: actions/checkout@v4
+        with:
+          repository: RefactoresLabs/frontend-lostfinder
+          ref: test/pr 
+          path: frontend-code
+        
+
+      - name: Deploy Dev Stack
+        run: |
+          cd infrastructure/dev
+          docker compose build --no-cache 
+          docker compose up -d
+
+      - name: Verify Health
+        run: |
+          docker ps
+          

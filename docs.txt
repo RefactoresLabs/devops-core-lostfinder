@@ -6,4 +6,3 @@ Variáveis de ambiente para otimizar o Python no Docker
 
 - PYTHONDONTWRITEBYTECODE
 - PYTHONUNBUFFERED
-
