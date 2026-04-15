@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ---------------------------------------------
   # FRONTEND: Vue 3 + Tailwind
@@ -7,7 +5,7 @@ services:
   frontend:
     build:
       context: ../../frontend-code
-      dockerfile: ../../docker/frontend-dev/dockerfile
+      dockerfile: ../docker/frontend-dev/dockerfile
     container_name: frontend-lostfinder
     ports:
       - "5173:5173"
@@ -27,7 +25,7 @@ services:
   backend:
     build:
       context: ../../backend-code
-      dockerfile: ../../docker/backend-dev/dockerfile
+      dockerfile: ../docker/backend-dev/dockerfile
     container_name: backend-lostfinder
     ports:
       - "8000:8000"
