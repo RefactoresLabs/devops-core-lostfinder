@@ -10,8 +10,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./web-findit-gamified:/app
-      - /app/node_modules 
+    - ../../frontend-code:/app          
+    - /app/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true 
     networks:
@@ -28,9 +28,9 @@ services:
       dockerfile: ../../docker/backend-dev/dockerfile
     container_name: backend-lostfinder
     ports:
-      - "8000:8000"
+      - "5000:5000"
     volumes:
-      - ./api-findit-gamified:/app
+      - - ../../backend-code:/app
     environment:
       - DATABASE_URL=postgresql://findit_user:findit_pass@db:5432/findit_db
       - FLASK_APP=app.py
