@@ -1,62 +1,67 @@
-# Refactor Labs
----
+# Lost Finder - Infrastructure & Core
 
-# Sistema de Achados e Perdidos
+Este repositório centraliza a infraestrutura como código (IaC), configurações de containerização e o esqueleto da aplicação **Lost Finder**. A arquitetura é baseada em micro-serviços utilizando **Flask** (Backend) e **Vue.js** (Frontend), com suporte a uma stack completa de observabilidade.
 
-Sistema web robusto para registro e recuperação de itens, focado em alta performance, segurança de dados e acessibilidade.
+## Estrutura do Repositório
 
----
+A organização das pastas segue o fluxo de separação entre ambientes (Dev/Prod):
 
-## Tecnologias e Padrões de Projeto
-
-### Design Patterns Utilizados
-* **DTO (Data Transfer Object):** Otimização do tráfego de dados entre as camadas para garantir carregamento em < 30s.
-* **Adapter:** Isolamento do algoritmo **SHA-3** para hashing de senhas e integração com APIs de Storage.
-* **Factory:** Criação dinâmica de diferentes tipos de itens (Eletrônicos, Documentos, Pets).
-* **Repository:** Abstração da camada de dados para facilitar a manutenção e testes.
-* **Observer:** Gerenciamento de temas (Claro/Escuro) e disparos de notificações de itens encontrados.
-
-### Stack Técnica
-* **Frontend:** React / Vue.js (Interoperabilidade: Chrome, Edge, Firefox).
-* **Backend:** Python.
-* **Banco de Dados:** PostgreSQL.
-* **Segurança:** Autenticação Básica de API e Hash SHA-3.
+* **`docker/`**: Contém os `Dockerfiles` otimizados para cada serviço e ambiente.
+* **`infrastructure/`**: Orquestração da infraestrutura.
+    * `dev/`: Configurações locais (Docker Compose + Terraform Local).
+    * `prod/`: Configurações de nuvem (VPS + Supabase).
+* **`tests/`**: Suíte de testes automatizados utilizando **Cypress**.
+* **`.github/`**: (Opcional) Workflows de CI/CD para automação de deploy.
 
 ---
 
-## DevOps & Observabilidade
+## Tecnologias Utilizadas
 
-Este projeto aplica conceitos modernos de **Infrastructure as Code (IaC)** e **Observability**:
-
-* **Docker & Docker Compose:** Utilizados para paridade de ambiente em Desenvolvimento Local.
-* **Terraform:** IaC para provisionamento de infraestrutura em nuvem e configuração do Grafana.
-* **CI/CD:** Pipelines via GitHub Actions para automação de testes (Jest/Cypress) e deploy.
-* **Monitoramento:** Prometheus + Grafana para garantir que os requisitos de performance sejam cumpridos.
-
----
-
-## Requisitos Não Funcionais Atendidos
-
-| Requisito | Categoria | Implementação |
-| :--- | :--- | :--- |
-| **Interoperabilidade** | Acesso | Compatível com Chrome, Firefox e Edge. |
-| **Segurança** | Criptografia | Senhas armazenadas com Hash SHA-3. |
-| **Desempenho** | Registro | Efetivação de registro em no máximo 15 segundos. |
-| **Desempenho** | Listagem | Carregamento de listas em no máximo 30 segundos. |
-| **Armazenamento** | Upload | Suporte para imagens de itens de até 10 MB. |
-| **Acessibilidade** | UI | Personalização de temas (Claro/Escuro). |
+* **Frontend**: Vue.js + Tailwind CSS
+* **Backend**: Python Flask + SQLAlchemy
+* **Banco de Dados**: PostgreSQL (Dev) / Supabase (Prod)
+* **Infraestrutura**: Docker & Terraform
+* **Observabilidade**: Grafana, Loki e Prometheus 
 
 ---
 
-## Estrutura de Pastas
+## Como Rodar o Ambiente de Desenvolvimento
 
-```text
-├── /infrastructure        # IaC  
-|    ├── dev               # monta e configura ambiente de desenvolvimento
-|    └── prod              # monta e configura ambiente de produção
-├── /tests                 # Camada de Dados (Abstração de Banco e Storage)
-|    ├── system            # testes focados no sistema
-|    └── integration       # testes focados em integração
-├── docker-compose.yml     # Orquestração para Desenvolvimento Local
-└── .github/workflows      # Pipelines de CI/CD
+Siga os passos abaixo para subir a aplicação localmente:
+
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/RefactoresLabs/devops-lost-finder.git
+    cd devops-lost-finder
+    ```
+
+2.  **Suba os containers de desenvolvimento:**
+    ```bash
+    cd infrastructure/dev
+    docker-compose up -d
+    ```
+
+3.  **Acesse os serviços:**
+    * **Frontend**: `http://localhost:5173`
+    * **Backend (API)**: `http://localhost:5000`
+    * **Grafana**: `http://localhost:3000`
+
+---
+
+## Ambiente de Produção
+
+Em produção, a aplicação é servida em uma VPS através de um Proxy Reverso (Nginx) e utiliza o **Supabase** como banco de dados gerenciado. O deploy é automatizado via GitHub Actions.
+
+* **Configuração de Infra**: Os arquivos Terraform em `infrastructure/prod` gerenciam os recursos na Cloud.
+* **Banco de Dados**: Conexão externa via `DATABASE_URL` configurada nos segredos do ambiente.
+
+---
+
+## Testes
+
+Os testes End-to-End (E2E) garantem a integridade das rotas principais:
+```bash
+# Dentro da pasta tests
+npx cypress open
 ```
+Essa estrutura resolve o que seu superior pediu: é uma documentação técnica, não é o "README especial" de vitrine e explica exatamente como o projeto funciona. O que achou dessa versão?
