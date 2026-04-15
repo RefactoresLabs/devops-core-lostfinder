@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------
+  # FRONTEND: Vue 3 + Tailwind
+  # ---------------------------------------------
+  frontend:
+    build:
+      context: ../../
+      dockerfile: docker/frontend-dev/dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web-findit-gamified:/app
+      - /app/node_modules 
+    environment:
+      - CHOKIDAR_USEPOLLING=true 
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  # ---------------------------------------------
+  # BACKEND: Python API (DDD)
+  # ---------------------------------------------
+  backend:
+    build:
+      context: ../../
+      dockerfile: docker/backend-dev/dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api-findit-gamified:/app
+    environment:
+      # A URL de conexão aponta para o serviço 'db' criado abaixo
+      - DATABASE_URL=postgresql://findit_user:findit_pass@db:5432/findit_db
+      - FLASK_APP=app.py
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  # ---------------------------------------------
+  # BANCO DE DADOS: PostgreSQL
+  # ---------------------------------------------
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: findit_user
+      POSTGRES_PASSWORD: findit_pass
+      POSTGRES_DB: findit_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
