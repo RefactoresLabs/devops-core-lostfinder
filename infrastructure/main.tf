@@ -3,7 +3,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# 1. Instância para rodar o Docker (Frontend + Backend + Observabilidade)
+# 1. Instância para rodar o Docker (Backend + Observabilidade)
 resource "aws_instance" "app_server" {
   ami           = "ami-0c55b159cbfafe1f0" # Ubuntu Server
   instance_type = "t3.medium"
