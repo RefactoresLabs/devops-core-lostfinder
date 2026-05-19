@@ -16,10 +16,8 @@ jobs:
         working-directory: backend-code
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Clone backend repo
-        run: git clone https://github.com/RefactoresLabs/backend-lostfinder.git
+        run: git clone https://github.com/RefactoresLabs/backend-lostfinder.git backend-code
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -27,7 +25,7 @@ jobs:
           python-version: 3.11
 
       - name: Install dependencies
-        run: pip install -r requirements.txt backend-code/requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run tests
         run: pytest
@@ -37,13 +35,11 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend-code
+        working-directory: frontend-code   
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Clone frontend repo
-        run: git clone https://github.com/RefactoresLabs/frontend-lostfinder.git
+        run: git clone https://github.com/RefactoresLabs/frontend-lostfinder.git frontend-code
 
       - name: Setup Node
         uses: actions/setup-node@v4
