@@ -31,10 +31,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build backend
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend-lostfinder:latest ./backend-code
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend-lostfinder:latest -f ./backend-code/dockerfile ./backend-code
 
       - name: Build frontend
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-lostfinder:latest ./frontend-code
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-lostfinder:latest -f ./frontend-code/Dockerfile ./frontend-code
 
       - name: Push backend
         run: docker push ${{ secrets.DOCKER_USERNAME }}/backend-lostfinder:latest
