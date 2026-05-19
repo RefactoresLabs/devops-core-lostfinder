@@ -12,17 +12,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Clone backend repo into backend-code
+      - name: Clone backend repo (preserving Dockerfile)
         working-directory: backend-code
         run: |
+          # Salva o Dockerfile original (se existir)
+          cp Dockerfile /tmp/Dockerfile.backend 2>/dev/null || cp dockerfile /tmp/dockerfile.backend 2>/dev/null || true
+          # Apaga tudo exceto o Dockerfile (que será sobrescrito se voltar)
           rm -rf * .* 2>/dev/null || true
+          # Clona o código do repo externo
           git clone --branch main --single-branch https://github.com/RefactoresLabs/backend-lostfinder.git .
+          # Se o repo externo NÃO trouxe Dockerfile, restaura o original
+          if [ ! -f Dockerfile ] && [ ! -f dockerfile ]; then
+            cp /tmp/Dockerfile.backend ./Dockerfile 2>/dev/null || cp /tmp/dockerfile.backend ./dockerfile 2>/dev/null || true
+          fi
 
-      - name: Clone frontend repo into frontend-code
+      - name: Clone frontend repo (preserving Dockerfile)
         working-directory: frontend-code
         run: |
+          cp Dockerfile /tmp/Dockerfile.frontend 2>/dev/null || true
           rm -rf * .* 2>/dev/null || true
           git clone --branch main --single-branch https://github.com/RefactoresLabs/frontend-lostfinder.git .
+          if [ ! -f Dockerfile ]; then
+            cp /tmp/Dockerfile.frontend ./Dockerfile 2>/dev/null || true
+          fi
 
       - name: Login Docker Hub
         uses: docker/login-action@v3
@@ -31,10 +43,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build backend
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend-lostfinder:latest -f ./backend-code/Dockerfile ./backend-code
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend-lostfinder:latest ./backend-code
 
       - name: Build frontend
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-lostfinder:latest -f ./frontend-code/Dockerfile ./frontend-code
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-lostfinder:latest ./frontend-code
 
       - name: Push backend
         run: docker push ${{ secrets.DOCKER_USERNAME }}/backend-lostfinder:latest
