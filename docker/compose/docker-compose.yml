@@ -44,7 +44,7 @@ services:
 
     build:
       context: ../../backend-code
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
 
     expose:
       - "5000"
