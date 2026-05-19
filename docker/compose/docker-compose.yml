@@ -6,14 +6,14 @@ services:
     container_name: frontend-lostfinder
 
     build:
-      context: ../../frontend-code/frontend
+      context: ../../frontend-code
       dockerfile: Dockerfile
 
     expose:
       - "5173"
 
     volumes:
-      - ../../frontend-code/frontend:/app
+      - ../../frontend-code:/app
       - /app/node_modules
 
     environment:
