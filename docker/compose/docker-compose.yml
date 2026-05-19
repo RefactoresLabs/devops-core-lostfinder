@@ -1,0 +1,198 @@
+version: "3.9"
+
+services:
+
+  frontend:
+    container_name: frontend-lostfinder
+
+    build:
+      context: ../../frontend-code/frontend
+      dockerfile: Dockerfile
+
+    expose:
+      - "5173"
+
+    volumes:
+      - ../../frontend-code/frontend:/app
+      - /app/node_modules
+
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      VITE_APP_NAME: ${VITE_APP_NAME}
+      VITE_APP_ENV: ${VITE_APP_ENV}
+      VITE_GEOCODING_API_URL: ${VITE_GEOCODING_API_URL}
+      VITE_GEOCODING_FORMAT: ${VITE_GEOCODING_FORMAT}
+      VITE_GEOCODING_CITY: ${VITE_GEOCODING_CITY}
+      VITE_GEOCODING_COUNTRY: ${VITE_GEOCODING_COUNTRY}
+
+    depends_on:
+      - backend
+
+    restart: unless-stopped
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    networks:
+      - app-network
+
+  backend:
+    container_name: backend-lostfinder
+
+    build:
+      context: ../../backend-code
+      dockerfile: dockerfile
+
+    expose:
+      - "5000"
+
+    volumes:
+      - ../../backend-code:/app
+
+    environment:
+      FLASK_APP: ${FLASK_APP}
+      USERNAME: ${USERNAME}
+      PASSWORD: ${PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE: ${DATABASE}
+      DATABASE_PORT: ${DATABASE_PORT}
+      PORT: ${PORT}
+      HOSTNAME: ${HOSTNAME}
+      SGBD: ${SGBD}
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus:latest
+
+    container_name: prometheus-lostfinder
+
+    expose:
+      - "9090"
+
+    volumes:
+      - ../monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+    restart: unless-stopped
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    networks:
+      - app-network
+
+  loki:
+    image: grafana/loki:latest
+
+    container_name: loki-lostfinder
+
+    expose:
+      - "3100"
+
+    volumes:
+      - ../monitoring/loki/config.yml:/etc/loki/config.yml
+      - loki-data:/loki
+
+    command:
+      - "-config.file=/etc/loki/config.yml"
+
+    restart: unless-stopped
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    networks:
+      - app-network
+
+  promtail:
+    image: grafana/promtail:latest
+
+    container_name: promtail-lostfinder
+
+    volumes:
+      - ../monitoring/promtail/config.yml:/etc/promtail/config.yml
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    command:
+      - "-config.file=/etc/promtail/config.yml"
+
+    depends_on:
+      - loki
+
+    restart: unless-stopped
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+
+    container_name: grafana-lostfinder
+
+    expose:
+      - "3000"
+
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+    depends_on:
+      - prometheus
+      - loki
+
+    restart: unless-stopped
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  grafana-storage:
+  loki-data:
