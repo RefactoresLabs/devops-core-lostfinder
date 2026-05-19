@@ -12,6 +12,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Clone backend repo into backend-code
+        working-directory: backend-code
+        run: |
+          rm -rf * .* 2>/dev/null || true
+          git clone --branch main --single-branch https://github.com/RefactoresLabs/backend-lostfinder.git .
+
+      - name: Clone frontend repo into frontend-code
+        working-directory: frontend-code
+        run: |
+          rm -rf * .* 2>/dev/null || true
+          git clone --branch main --single-branch https://github.com/RefactoresLabs/frontend-lostfinder.git .
+
       - name: Login Docker Hub
         uses: docker/login-action@v3
         with:
@@ -19,13 +31,13 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build backend
-        run: docker build -t seuuser/backend ./backend-code
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend-lostfinder:latest ./backend-code
 
       - name: Build frontend
-        run: docker build -t seuuser/frontend ./frontend-code
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-lostfinder:latest ./frontend-code
 
       - name: Push backend
-        run: docker push seuuser/backend
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/backend-lostfinder:latest
 
       - name: Push frontend
-        run: docker push seuuser/frontend
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend-lostfinder:latest
