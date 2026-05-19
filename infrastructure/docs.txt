@@ -1,0 +1,8 @@
+# SOBRE DOCKER FILE 
+
+## BACK END
+
+Variáveis de ambiente para otimizar o Python no Docker
+
+- PYTHONDONTWRITEBYTECODE
+- PYTHONUNBUFFERED
