@@ -11,13 +11,14 @@ jobs:
   backend:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: backend-code
-
     steps:
-      - name: Clone backend repo
-        run: git clone https://github.com/RefactoresLabs/backend-lostfinder.git backend-code
+      - uses: actions/checkout@v4
+
+      - name: Clone backend repo into backend-code
+        working-directory: backend-code
+        run: |
+          rm -rf * .* 2>/dev/null || true
+          git clone --branch main --single-branch https://github.com/RefactoresLabs/backend-lostfinder.git .
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -25,21 +26,24 @@ jobs:
           python-version: 3.11
 
       - name: Install dependencies
+        working-directory: backend-code
         run: pip install -r requirements.txt
 
       - name: Run tests
+        working-directory: backend-code
         run: pytest
 
   frontend:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: frontend-code   
-
     steps:
-      - name: Clone frontend repo
-        run: git clone https://github.com/RefactoresLabs/frontend-lostfinder.git frontend-code
+      - uses: actions/checkout@v4
+
+      - name: Clone frontend repo into frontend-code
+        working-directory: frontend-code
+        run: |
+          rm -rf * .* 2>/dev/null || true
+          git clone --branch main --single-branch https://github.com/RefactoresLabs/frontend-lostfinder.git .
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -47,10 +51,13 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
+        working-directory: frontend-code
         run: npm install
 
       - name: Run tests
+        working-directory: frontend-code
         run: npm run test
 
       - name: Build app
+        working-directory: frontend-code
         run: npm run build
