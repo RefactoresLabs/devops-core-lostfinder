@@ -29,6 +29,10 @@ jobs:
         working-directory: backend-code
         run: pip install -r requirements.txt
 
+      - name: Install pytest
+        working-directory: backend-code
+        run: pip install pytest
+
       - name: Run tests
         working-directory: backend-code
         run: pytest
